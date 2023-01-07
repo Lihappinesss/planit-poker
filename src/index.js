@@ -3,7 +3,7 @@ import signup from './pages/signup';
 import notFound from './pages/notFound';
 import serverError from './pages/serverError';
 import profile from './pages/profile';
-import chat from './pages/Chat';
+import chat from './pages/chat';
 
 import mainTpl from './index.hbs';
 import signinTpl from './pages/signin/signin.hbs';
