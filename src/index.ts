@@ -16,9 +16,6 @@ const notFoundPage = new NotFound();
 const profilePage = new Profile();
 const chatPage = new Chat();
 
-// if (window.location.pathname === '/') {
-//   root.innerHTML = mainPage();
-// }
 if (window.location.pathname === '/signin') {
   render('#root', signinPage);
 }

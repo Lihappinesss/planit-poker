@@ -5,7 +5,10 @@ import Input from '../../components/Input';
 import data from '../../data/chats.json';
 import messages from '../../data/messages.json';
 
+import validateForm from '../../utils/validateForm';
+
 import template from './template';
+import styles from './index.module.sass';
 
 class Chat extends Block {
   constructor(props: Record<string, any> = {}) {
@@ -13,6 +16,11 @@ class Chat extends Block {
       type: 'text',
       placeholder: 'Сообщение',
       name: 'message',
+      onInput: (value) => console.log(value),
+      onValidate:
+        (
+          element: HTMLInputElement | null,
+        ) => validateForm(element.value, element.name, element),
     });
 
     super('div', {
@@ -23,6 +31,7 @@ class Chat extends Block {
         companion: 'Павел',
         inputField,
       },
+      className: styles.wrapper,
     });
   }
 

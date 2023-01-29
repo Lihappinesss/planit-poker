@@ -6,30 +6,19 @@ import styles from './index.module.sass';
 
 class Button extends Block {
   constructor(props: Ibutton) {
-    const onBlur = () => {
-      console.log('blur');
-    };
-
-    const onClick = (e: MouseEvent) => {
-      e.preventDefault();
-    };
-
-    super('div', {
+    super('button', {
       ...props,
+      className: styles.btn,
       events: {
-        click: onClick,
-        blur: onBlur,
+        click: props.onClick,
+        blur: props.onBlur,
       },
     });
   }
 
-  static getName() {
-    return 'Button';
-  }
-
   render(): DocumentFragment {
     return this.compile(
-      `<button type="{{type}}" class=${styles.btn}>{{text}}</button>`,
+      '{{text}}',
       this.props,
     );
   }

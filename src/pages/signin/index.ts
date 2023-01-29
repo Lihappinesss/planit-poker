@@ -2,11 +2,21 @@ import Block from '../../modules/Block';
 
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import Navigation from '../../components/Navigation';
 
-import styles from './index.module.sass';
+import template from './template';
 
 class Signin extends Block {
   constructor(props: Record<string, any> = {}) {
+    const handleSign = (e: MouseEvent) => {
+      e.preventDefault();
+      const data = {};
+      document.querySelectorAll('input').forEach((elem) => {
+        data[elem.name] = elem.value;
+      });
+      console.log(data);
+    };
+
     const login = new Input({
       type: 'text',
       placeholder: 'Логин',
@@ -20,50 +30,27 @@ class Signin extends Block {
     });
 
     const button = new Button({
-      type: 'submit',
+      attr: {
+        type: 'submit',
+      },
       text: 'Авторизоваться',
+      onClick: (e) => {
+        handleSign(e);
+      },
     });
+
+    const nav = new Navigation();
 
     super('div', {
       ...props,
       button,
       login,
       pass,
+      nav,
     });
   }
 
-  // componentDidUpdate(oldProps, newProps) {
-  //   // Заменяем пропсы
-  //   this.children.button.setProps(newProps.button.props);
-
-  //   // Заменяем весь компонент
-  //   this.children.button = newProps.image;
-
-  //   return true;
-  // }
-
-  static getName() {
-    return 'SignIn';
-  }
-
   render(): DocumentFragment {
-    const template = `
-      <div class='wrapper'>
-        <h1 class='title'>Вход</h1>
-        <form class='form'>
-          <div class='input'>
-            {{{login}}}
-          </div>
-          <div>
-            {{{pass}}}
-          </div>
-          <div class=${styles.btn}>
-            {{{button}}}
-          </div>
-          <a href='/signup' class='link'>Нет аккаунта?</a>
-        </form>
-      </div>
-    `;
     return this.compile(template);
   }
 }

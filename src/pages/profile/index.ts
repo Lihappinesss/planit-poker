@@ -3,9 +3,11 @@ import Block from '../../modules/Block';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 
+import validateForm from '../../utils/validateForm';
+
 import avatar from '../../images/avatar.jpg';
 
-import styles from './index.module.sass';
+import template from './template';
 
 class Profile extends Block {
   constructor(props: Record<string, any> = {}) {
@@ -14,55 +16,83 @@ class Profile extends Block {
       type: 'email',
       placeholder: 'Почта',
       name: 'email',
-      value: '',
+      onInput: (value) => console.log(value),
+      onValidate:
+        (
+          element: HTMLInputElement | null,
+        ) => validateForm(element.value, element.name, element),
     });
 
     const login = new Input({
       type: 'text',
       placeholder: 'Логин',
       name: 'login',
-      value: '',
+      onInput: (value) => console.log(value),
+      onValidate:
+        (
+          element: HTMLInputElement | null,
+        ) => validateForm(element.value, element.name, element),
     });
 
     const name = new Input({
       type: 'text',
       placeholder: 'Имя',
       name: 'first_name',
-      value: '',
+      onInput: (value) => console.log(value),
+      onValidate:
+        (
+          element: HTMLInputElement | null,
+        ) => validateForm(element.value, element.name, element),
     });
 
     const sername = new Input({
       type: 'text',
       placeholder: 'Фамилия',
       name: 'second_name',
-      value: '',
+      onInput: (value) => console.log(value),
+      onValidate:
+        (
+          element: HTMLInputElement | null,
+        ) => validateForm(element.value, element.name, element),
     });
 
     const tel = new Input({
       type: 'tel',
       placeholder: 'Телефон',
       name: 'phone',
-      value: '',
+      onInput: (value) => console.log(value),
+      onValidate:
+        (
+          element: HTMLInputElement | null,
+        ) => validateForm(element.value, element.name, element),
     });
 
     const pass = new Input({
       type: 'password',
       placeholder: 'Пароль',
       name: 'password',
-      value: '',
+      onInput: (value) => console.log(value),
+      onValidate:
+        (
+          element: HTMLInputElement | null,
+        ) => validateForm(element.value, element.name, element),
     });
 
     const changeData = new Button({
-      type: 'submit',
+      attr: {
+        type: 'submit',
+      },
       text: 'Сохранить',
     });
 
     const exit = new Button({
-      type: 'button',
+      attr: {
+        type: 'button',
+      },
       text: 'Выйти',
     });
 
-    super('div', {
+    super('form', {
       ...props,
       changeData,
       login,
@@ -79,43 +109,7 @@ class Profile extends Block {
 
   render(): DocumentFragment {
     return (
-      this.compile(
-        `
-          <form>
-            <div class=${styles.wrapper}>
-              <div class=${styles.profileImg}>
-                <div class=${styles.name}>{{nameProfile}}</div>
-                <div class=${styles.avatar}>
-                  <img src={{avatar}} alt='avatar' class=${styles.img} />
-                  <input type="file" class=${styles.upload} name='avatar' />
-                </div>
-              </div>
-
-              <div class=${styles.columns}>
-                <div class=${styles.left}>
-                  <div>Почта</div>
-                  <div>Имя</div>
-                  <div>Фамилия</div>
-                  <div>Телефон</div>
-                  <div>Пароль</div>
-                </div>
-                <div>
-                  <div>{{{email}}}</div>
-                  <div>{{{name}}}</div>
-                  <div>{{{sername}}}</div>
-                  <div>{{{tel}}}</div>
-                  <div>{{{pass}}}</div>
-                </div>
-              </div>
-
-              <div class=${styles.btn}>
-                <div class=${styles.change}>{{{changeData}}}</div>
-                <div>{{{exit}}}</div>
-              </div>
-            </div>
-          </form>
-        `,
-      )
+      this.compile(template)
     );
   }
 }

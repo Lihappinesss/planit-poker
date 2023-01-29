@@ -1,6 +1,7 @@
 import styles from './index.module.sass';
 
 const template = `
+  {{{nav}}}
   <div class='wrapper'>
     <h1 class='title'>Регистрация</h1>
     <form class='form'>

@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid';
 import Handlebars from 'handlebars';
 
 import EventBus from '../EventBus/index';
+import debounce from '../../utils/debounce';
 
 type TProps = Record<string, any>;
 
@@ -13,12 +14,11 @@ class Block {
 
   private _id: string;
 
-  private _element: HTMLElement;
+  protected _element: HTMLElement;
 
   private _eventBus: () => EventBus;
 
-  // eslint-disable-next-line no-use-before-define
-  children: Record<string, Block>;
+  children: Record<string, any>;
 
   protected readonly props: TProps;
 
@@ -78,13 +78,12 @@ class Block {
     console.log(oldProps);
   }
 
-  compile(template: string, props?: TProps) {
+  compile(template?: string, props?: TProps) {
     if (typeof props === 'undefined') {
       props = this.props;
     }
 
     const propsAndStubs = { ...props };
-    console.log(this.children);
 
     Object.entries(this.children).forEach(([key, child]) => {
       propsAndStubs[key] = `<div data-id="${child._id}"></div>`;
@@ -145,6 +144,8 @@ class Block {
     this._element.innerHTML = '';
     this._element.appendChild(block);
     this._addEvents();
+    this._addAttribute();
+    this._addClassName();
   }
 
   render(): DocumentFragment {
@@ -190,8 +191,21 @@ class Block {
     const { events = {} } = this.props;
 
     Object.keys(events).forEach((eventName) => {
-      this._element.addEventListener(eventName, events[eventName]);
+      if (events.debounce) {
+        const debouncedHandle = debounce(events[eventName], 500);
+        this._element.addEventListener(eventName, debouncedHandle);
+      } else {
+        this._element.addEventListener(eventName, events[eventName]);
+      }
     });
+  }
+
+  private _addClassName() {
+    const { className = '' } = this.props;
+
+    if (className !== '') {
+      this._element.classList.add(className);
+    }
   }
 
   private _removeEvents() {
@@ -200,6 +214,15 @@ class Block {
     Object.keys(events).forEach((eventName) => {
       this._element.removeEventListener(eventName, events[eventName]);
     });
+  }
+
+  private _addAttribute() {
+    const { attr = {} } = this.props;
+    let point: [string, string];
+
+    Object.entries((attr)).forEach(
+      ([key, value]: typeof point) => this._element.setAttribute(key, value),
+    );
   }
 
   private _getChildren(propsAndChildren: TProps) {

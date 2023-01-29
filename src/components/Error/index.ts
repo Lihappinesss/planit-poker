@@ -8,21 +8,16 @@ class Error extends Block {
   constructor(props: TError) {
     super('div', {
       ...props,
+      className: styles.wrapper,
     });
-  }
-
-  static getName() {
-    return 'Error';
   }
 
   render(): DocumentFragment {
     return this.compile(
       `
-        <div class=${styles.wrapper}>
-          <div class=${styles.error}>{{err}}</div>
-          <div class=${styles.text}>{{text}}</div>
-          <a class=${styles.link} href='/chat'>Назад к чатам</a>
-        </div>
+        <div class=${styles.error}>{{err}}</div>
+        <div class=${styles.text}>{{text}}</div>
+        <a class=${styles.link} href='/chat'>Назад к чатам</a>
       `,
       this.props,
     );
