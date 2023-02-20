@@ -4,10 +4,7 @@ const template = `
   <div class=${styles.wrapper}>
     <div class=${styles.profileImg}>
       <div class=${styles.name}>{{nameProfile}}</div>
-      <div class=${styles.avatar}>
-        <img src={{avatar}} alt='avatar' class=${styles.img} />
-        <input type="file" class=${styles.upload} name='avatar' />
-      </div>
+      {{{avatar}}}
     </div>
 
     <div class=${styles.columns}>

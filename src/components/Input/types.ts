@@ -3,6 +3,7 @@ export type TInput = {
   placeholder: string,
   debounce?: (this: any, ...args: any[]) => void,
   name: string,
-  onInput?: (value: string) => void,
+  onInput?: (value: string, e: Event) => void,
   onValidate?: (element: HTMLInputElement | null) => boolean,
+  value?: string
 };

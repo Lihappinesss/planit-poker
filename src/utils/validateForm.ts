@@ -18,7 +18,7 @@ const isEmailValid = (email:string) => {
 };
 
 const isPasswordSecure = (password: string) => {
-  const re = /[-+~!?@#$%^&*;\\()\\[\\]\\|:\\w]*/;
+  const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   return re.test(password);
 };
 
@@ -35,10 +35,12 @@ const showError = (input: HTMLElement, message: string):void => {
 };
 
 const showSuccess = (input: HTMLElement) => {
-  const formWrapper = input.parentElement;
+  if (input) {
+    const formWrapper = input.parentElement;
 
-  const error = formWrapper.querySelector('.error');
-  error.textContent = '';
+    const error = formWrapper.querySelector('.error');
+    error.textContent = '';
+  }
 };
 
 const validateEmail = (email: string, elem?: HTMLElement): boolean => {

@@ -1,21 +1,28 @@
-import Block from '../../modules/Block';
+import Block, { TProps } from '../../modules/Block';
+
+import userController from '../../controllers/UserController';
+import auth from '../../controllers/Auth';
 
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import Avatar from '../../components/Avatar';
 
 import validateForm from '../../utils/validateForm';
-
-import avatar from '../../images/avatar.jpg';
+import connect from '../../hoc/connect';
 
 import template from './template';
 
 class Profile extends Block {
-  constructor(props: Record<string, any> = {}) {
-    const nameProfile = 'name';
+  constructor(props: TProps) {
+    const { user } = props;
+
+    const nameProfile = user.first_name;
+
     const email = new Input({
       type: 'email',
       placeholder: 'Почта',
       name: 'email',
+      value: user.email,
       onInput: (value) => console.log(value),
       onValidate:
         (
@@ -27,6 +34,7 @@ class Profile extends Block {
       type: 'text',
       placeholder: 'Логин',
       name: 'login',
+      value: user.login,
       onInput: (value) => console.log(value),
       onValidate:
         (
@@ -38,6 +46,7 @@ class Profile extends Block {
       type: 'text',
       placeholder: 'Имя',
       name: 'first_name',
+      value: user.first_name,
       onInput: (value) => console.log(value),
       onValidate:
         (
@@ -49,6 +58,7 @@ class Profile extends Block {
       type: 'text',
       placeholder: 'Фамилия',
       name: 'second_name',
+      value: user.second_name,
       onInput: (value) => console.log(value),
       onValidate:
         (
@@ -60,6 +70,7 @@ class Profile extends Block {
       type: 'tel',
       placeholder: 'Телефон',
       name: 'phone',
+      value: user.phone,
       onInput: (value) => console.log(value),
       onValidate:
         (
@@ -82,6 +93,7 @@ class Profile extends Block {
       type: 'text',
       placeholder: 'Имя в чате',
       name: 'display_name',
+      value: user.display_name,
       onInput: (value) => console.log(value),
       onValidate:
         (
@@ -89,11 +101,23 @@ class Profile extends Block {
         ) => validateForm(element.value, element.name, element),
     });
 
+    const avatar = new Avatar({
+      ...props,
+      onInput: (file) => {
+        const formData = new FormData();
+        formData.append('avatar', file);
+        userController.updateAvatar(formData);
+      },
+    });
+
     const changeData = new Button({
       attr: {
         type: 'submit',
       },
       text: 'Сохранить',
+      onClick: () => {
+        console.log(props);
+      },
     });
 
     const exit = new Button({
@@ -101,6 +125,9 @@ class Profile extends Block {
         type: 'button',
       },
       text: 'Выйти',
+      onClick: () => {
+        auth.logout();
+      },
     });
 
     super('form', {
@@ -116,7 +143,18 @@ class Profile extends Block {
       nameProfile,
       exit,
       displayName,
+      events: {
+        submit: (event) => {
+          event.preventDefault();
+        },
+      },
     });
+  }
+
+  getStateFromProps(props) {
+    this.state = {
+      ...props,
+    };
   }
 
   render(): DocumentFragment {
@@ -126,4 +164,11 @@ class Profile extends Block {
   }
 }
 
-export default Profile;
+const withChats = connect((state) => {
+  return {
+    user: state.user,
+  };
+});
+
+const ProfilePage = withChats(Profile);
+export default ProfilePage;

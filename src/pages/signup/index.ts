@@ -1,5 +1,7 @@
 import Block from '../../modules/Block';
 
+import authController from '../../controllers/Auth';
+
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Navigation from '../../components/Navigation';
@@ -14,9 +16,10 @@ class SignUp extends Block {
     const handleSubmit = (e: MouseEvent) => {
       e.preventDefault();
       const form = document.querySelector('form');
-      const fields = Array.from(form).filter((el) => el.nodeName === 'input');
-      const formData = fields.reduce((acc: Record<string, string>, field: HTMLInputElement) => {
+      const fields = Array.from(form).filter((el) => el.nodeName === 'INPUT');
+      const formData = fields.reduce((acc: any, field: HTMLInputElement) => {
         acc[field.name] = field.value;
+        console.log(acc);
         return acc;
       }, {});
 
@@ -28,14 +31,15 @@ class SignUp extends Block {
       const isPhoneValid = validateForm(formData.phone, 'phone');
 
       const isValidField = isEmailValid
-      && isPasswordValid
-      && isLoginValid
-      && isFirstValid
-      && isSecondValid
-      && isPhoneValid;
+        && isPasswordValid
+        && isLoginValid
+        && isFirstValid
+        && isSecondValid
+        && isPhoneValid;
 
       if (isValidField) {
-        console.log(formData);
+        console.log(formData, 'form');
+        authController.signUp(formData);
       }
     };
 

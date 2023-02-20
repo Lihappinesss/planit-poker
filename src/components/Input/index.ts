@@ -11,10 +11,9 @@ class Input extends Block {
       events: {
         blur: () => this.validateForm(),
         focus: () => this.validateForm(),
-        debounce: props.debounce,
         input: (e: InputEvent) => {
           if (this.props.onInput) {
-            this.props.onInput((e.target as HTMLInputElement).value);
+            this.props.onInput((e.target as HTMLInputElement).value, e);
             this.validateForm();
           }
         },
@@ -40,6 +39,7 @@ class Input extends Block {
           placeholder="{{placeholder}}"
           name="{{name}}"
           autocomplete="off"
+          value="{{value}}"
         />
         <label for="{{name}}" class=${styles.label}>{{placeholder}}</label>
         <div class='error'></div>

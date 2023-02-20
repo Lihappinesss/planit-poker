@@ -1,5 +1,7 @@
 import Block from '../../modules/Block';
 
+import authController from '../../controllers/Auth';
+
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Navigation from '../../components/Navigation';
@@ -10,11 +12,14 @@ class Signin extends Block {
   constructor(props: Record<string, any> = {}) {
     const handleSign = (e: MouseEvent) => {
       e.preventDefault();
-      const data = {};
+      const data = {
+        email: '',
+        password: '',
+      };
       document.querySelectorAll('input').forEach((elem) => {
         data[elem.name] = elem.value;
       });
-      console.log(data);
+      authController.signIn(data);
     };
 
     const login = new Input({
