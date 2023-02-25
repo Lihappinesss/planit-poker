@@ -1,7 +1,14 @@
 import ChatAPI from '../modules/Api/ChatApi';
 // import router from '../modules/Router';
 import store from '../store';
-import { getChats, addChat } from '../store/actions';
+import {
+  setChats,
+  addChat,
+  setToken,
+  setChatUsers,
+} from '../store/actions';
+
+import { ChatTitle, ChatId, NewUser } from '../modules/Api/types';
 
 class ChatController {
   private api: ChatAPI;
@@ -10,7 +17,7 @@ class ChatController {
     this.api = new ChatAPI();
   }
 
-  async create(data) {
+  async create(data: ChatTitle) {
     try {
       await this.api.create(data)
         .then((chat) => {
@@ -26,43 +33,32 @@ class ChatController {
     try {
       await this.api.request()
         .then((chats) => {
-          store.dispatch(getChats(chats));
+          store.dispatch(setChats(chats.reverse()));
         });
     } catch (e) {
       console.log(e);
     }
-    // .catch(this.handleError);
-    // try {
-    //   return await this.api.request()
-    //     .then((chats) => {
-    //       store.dispatch(getChats(chats));
-    //       return chats;
-    //     });
-    // } catch (e) {
-    //   console.log(e);
-    //   // router.go('/sign-in');
-    // }
   }
 
-  async removeChat() {
-    // return this.api.removeChat(store.state.chatId)
-    //   .then(() => {
-    //     this.request();
-    //   });
+  async removeChat(data: ChatId) {
+    return this.api.removeChat(data)
+      .then(() => {
+        this.request();
+      });
   }
 
-  async addUserChat(data) {
+  async addUserChat(data: NewUser) {
     try {
       await this.api.addUserChat(data)
         .then(() => {
-          console.log('Пользователи добавлены', 'success');
+          console.log('Пользователь добавлен');
         });
     } catch (e) {
       console.log(e);
     }
   }
 
-  async deleteUserChat(data) {
+  async deleteUserChat(data: NewUser) {
     try {
       await this.api.deleteUserChat(data)
         .then(() => {
@@ -75,10 +71,11 @@ class ChatController {
 
   async requestMessageToken(chatId: number) {
     try {
-      await this.api.requestMessageToken(chatId);
-      // .then((auth) => {
-      //   store.dispatch({ token });
-      // });
+      await this.api.requestMessageToken(chatId)
+        .then((auth) => {
+          const { token } = auth;
+          store.dispatch(setToken(token));
+        });
     } catch (e) {
       console.log(e);
     }
@@ -88,15 +85,11 @@ class ChatController {
     try {
       await this.api.requestChatUsers(chatId)
         .then((users) => {
-          return users;
+          store.dispatch(setChatUsers(users));
         });
     } catch (e) {
       console.log(e);
     }
-  }
-
-  handleError() {
-    console.log('оши');
   }
 }
 

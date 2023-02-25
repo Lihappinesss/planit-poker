@@ -4,12 +4,12 @@ import authController from '../../controllers/Auth';
 
 import Button from '../../components/Button';
 import Input from '../../components/Input';
-import Navigation from '../../components/Navigation';
 
 import template from './template';
+import router from '../../modules/Router';
 
 class Signin extends Block {
-  constructor(props: Record<string, any> = {}) {
+  constructor(tag, props: Record<string, any> = {}) {
     const handleSign = (e: MouseEvent) => {
       e.preventDefault();
       const data = {
@@ -22,19 +22,19 @@ class Signin extends Block {
       authController.signIn(data);
     };
 
-    const login = new Input({
+    const Login = new Input({
       type: 'text',
       placeholder: 'Логин',
       name: 'login',
     });
 
-    const pass = new Input({
+    const Pass = new Input({
       type: 'password',
       placeholder: 'Пароль',
       name: 'password',
     });
 
-    const button = new Button({
+    const ButtonSignin = new Button({
       attr: {
         type: 'submit',
       },
@@ -44,14 +44,24 @@ class Signin extends Block {
       },
     });
 
-    const nav = new Navigation();
+    const GoSinup = new Button({
+      attr: {
+        type: 'submit',
+      },
+      text: 'Нет аккаунта',
+      type: 'ghost',
+      onClick: (e) => {
+        e.preventDefault();
+        router.go('/signup');
+      },
+    });
 
     super('div', {
       ...props,
-      button,
-      login,
-      pass,
-      nav,
+      ButtonSignin,
+      Login,
+      Pass,
+      GoSinup,
     });
   }
 

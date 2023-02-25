@@ -1,23 +1,6 @@
 import BaseAPI from './BaseApi';
 
-export interface SigninData{
-  email: string;
-  password: string;
-}
-
-export interface SignupData {
-  first_name: string;
-  second_name: string;
-  login: string;
-  email: string;
-  password: string,
-  phone: string;
-}
-
-export interface signInData {
-  email: string,
-  password: string
-}
+import { SigninData, SignupData } from './types';
 
 class AuthApi extends BaseAPI {
   constructor() {

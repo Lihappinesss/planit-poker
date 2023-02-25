@@ -10,12 +10,18 @@ import Profile from './pages/profile';
 import Chat from './pages/chat';
 import NotFound from './pages/notFound';
 
+import store from './store';
+
+router
+  .use('/', Chat)
+  .use('/signin', Signin)
+  .use('/signup', Signup)
+  .use('/profile', Profile)
+  .use('/notFound', NotFound);
+
 authController.fetchUser().then(() => {
-  router
-    .use('/', Chat)
-    .use('/signin', Signin)
-    .use('/signup', Signup)
-    .use('/profile', Profile)
-    .use('/notFound', NotFound)
-    .start();
+  if (store.getState().user) {
+    router.start();
+    router.go('/');
+  }
 });

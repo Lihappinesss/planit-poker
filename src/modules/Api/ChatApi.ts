@@ -1,11 +1,13 @@
 import BaseAPI from './BaseApi';
 
+import { ChatTitle, NewUser, ChatId } from './types';
+
 export default class ChatAPI extends BaseAPI {
   constructor() {
     super('/chats');
   }
 
-  public create(data) {
+  public create(data: ChatTitle) {
     return this.post('/', {
       data: JSON.stringify(data),
     });
@@ -15,21 +17,21 @@ export default class ChatAPI extends BaseAPI {
     return this.get('/', {});
   }
 
-  public removeChat(chatId: number) {
+  public removeChat(chatId: ChatId) {
     return this.delete('/', {
-      data: chatId,
+      data: JSON.stringify(chatId),
     });
   }
 
-  public addUserChat(data) {
+  public addUserChat(data: NewUser) {
     return this.put('/users', {
-      data,
+      data: JSON.stringify(data),
     });
   }
 
-  public deleteUserChat(data) {
+  public deleteUserChat(data: ChatId) {
     return this.delete('/users', {
-      data,
+      data: JSON.stringify(data),
     });
   }
 

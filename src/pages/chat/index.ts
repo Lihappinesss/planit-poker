@@ -1,50 +1,45 @@
 import Block from '../../modules/Block';
 
 import chatController from '../../controllers/ChatController';
+import messageController from '../../controllers/MessageController';
+import userController from '../../controllers/UserController';
 
+import router from '../../modules/Router';
 import connect from '../../hoc/connect';
+import store from '../../store';
+import {
+  setMessages,
+  setChatId,
+  setSearchUsers,
+  setShowUserAffect,
+  setShowSearchUser,
+}
+  from '../../store/actions';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import Chats from '../../components/Chats';
-
-import validateForm from '../../utils/validateForm';
+import MessageSend from '../../components/MessageSend';
+import UserAffect from '../../components/UserAffectList';
+import Popup from '../../components/Popup';
 
 import template from './template';
-import styles from './index.module.sass';
+
+import more from '../../images/more.svg';
+import { TStore } from '../../store/types';
 
 class Chat extends Block {
-  constructor(props: Record<string, any> = {}) {
+  constructor(tag: string, props: Record<string, any> = {}) {
     let chatName = '';
 
-    const inputField = new Input({
-      type: 'text',
-      placeholder: 'Сообщение',
-      name: 'message',
-      onInput: (value) => console.log(value),
-      onValidate:
-        (
-          element: HTMLInputElement | null,
-        ) => validateForm(element.value, element.name, element),
-    });
-
-    const sendBtn = new Button({
-      text: 'Отправить',
-      attr: {
-        type: 'button',
-      },
-      onClick: () => {
-      },
-    });
-
-    const inputNewChat = new Input({
+    const NewChatInput = new Input({
       type: 'text',
       placeholder: 'Название чата',
       name: 'chatName',
-      onInput: (value) => { chatName = value; },
+      onInput: (value: string) => { chatName = value; },
     });
 
-    const createChat = new Button({
+    const CreateNewChatBtn = new Button({
       text: 'Создать чат',
       attr: {
         type: 'button',
@@ -56,63 +51,156 @@ class Chat extends Block {
       },
     });
 
-    const chatsCard = new Chats({
+    const ChatsCard = new Chats('ul', {
+      onClick: (chatId: number) => {
+        store.dispatch(setMessages([]));
+        messageController.leave();
+        store.dispatch(setChatId(chatId));
+        this.requestChat(chatId);
+        this.requestChatUsers();
+      },
+    });
+
+    const SearchChat = new Input({
+      type: 'text',
+      placeholder: 'Поиск',
+      name: 'search',
+      styleType: 'secondary',
+      // onInput: (value) => console.log(value),
+    });
+
+    const Send = new MessageSend('form', {
+      onMessageSend: ({ message }) => {
+        messageController.sendMessage(message);
+      },
+    });
+
+    const UserAffectList = new UserAffect('ul', {
       ...props,
+      addUser: () => {
+        store.dispatch(setShowUserAffect(false));
+        store.dispatch(setShowSearchUser(true));
+      },
+      deleteUser: () => {
+        const data = {
+          chatId: this.props.chatId,
+          users: this.props.chatUsers,
+        };
+        chatController.deleteUserChat(data);
+        store.dispatch(setShowUserAffect(false));
+      },
+      deleteChat: () => {
+        const data = {
+          chatId: this.props.chatId,
+        };
+        chatController.removeChat(data);
+        store.dispatch(setShowUserAffect(false));
+      },
+    });
+
+    const PopupChat = new Popup('div', {
+      ...props,
+      onInput: (value: string) => {
+        if (value === '') {
+          store.dispatch(setSearchUsers([]));
+        } else {
+          userController.search(value);
+        }
+      },
+      onClick: (userId: number) => {
+        const users = [];
+        users.push(userId);
+        const data = {
+          users,
+          chatId: this.props.chatId,
+        };
+        chatController.addUserChat(data).then(() => {
+          this.requestChatUsers();
+        });
+        store.dispatch(setShowSearchUser(false));
+      },
+      closeSearch: () => {
+        store.dispatch(setShowSearchUser(false));
+      },
+    });
+
+    const MoreBtn = new Button({
+      icon: more,
+      attr: {
+        type: 'button',
+      },
+      type: 'ghost',
+      onClick: () => store.dispatch(setShowUserAffect(true)),
+    });
+
+    const GoProfileBtn = new Button({
+      text: 'Профиль',
+      attr: {
+        type: 'button',
+      },
+      type: 'ghost',
+      onClick: () => {
+        router.go('/profile');
+      },
     });
 
     super('div', {
       ...props,
-      className: styles.wrapper,
-      createChat,
-      inputNewChat,
-      inputField,
-      sendBtn,
-      chatsCard,
+      CreateNewChatBtn,
+      NewChatInput,
+      ChatsCard,
+      Send,
+      SearchChat,
+      UserAffectList,
+      Popup,
+      PopupChat,
+      MoreBtn,
+      GoProfileBtn,
     });
   }
 
-  requestMessages() {
-  }
-
-  handleChats() {
-    return this.props.chats;
+  requestMessages(token: string) {
+    messageController.connect({
+      userId: this.props.user?.id,
+      chatId: this.props.chatId,
+      token,
+    });
   }
 
   requestChat(chatId: number) {
     if (!chatId) {
       return;
     }
-    chatController.requestMessageToken(chatId);
-    // .then(({ token }) => {
-    //   console.log(token);
-    //   this.requestMessages(token);
-    // });
-  }
-
-  requestChatList() {
-    chatController.request()
+    chatController.requestMessageToken(chatId)
       .then(() => {
-        // this.requestChat(store.state.chatId);
+        this.requestMessages(this.props.token);
       });
   }
 
+  requestChatList() {
+    return chatController.request()
+      .then(() => {
+        this.requestChat(this.props.chatId);
+      });
+  }
+
+  requestChatUsers() {
+    chatController.requestChatUsers(this.props.chatId);
+  }
+
   componentDidMount() {
-    this.requestChatList();
+    this.requestChatList().then(() => this.requestChatUsers());
   }
 
   render(): DocumentFragment {
     return (
-      this.compile(template())
+      this.compile(template(this.props), this.props)
     );
   }
 }
 
-const withChats = connect((state) => {
-  return {
-    chats: [...state.chats],
-    messages: [...(state.messages || [])],
-  };
-});
+function mapUserToProps(state: TStore) {
+  return state;
+}
 
-const ChatPage = withChats(Chat);
-export default ChatPage;
+export default connect(Chat, mapUserToProps);

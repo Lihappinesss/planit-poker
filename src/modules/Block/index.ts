@@ -3,6 +3,8 @@ import Handlebars from 'handlebars';
 
 import EventBus from '../EventBus/index';
 
+import debounce from '../../utils/debounce';
+
 export type TProps = Record<string, any>;
 
 class Block {
@@ -96,7 +98,7 @@ class Block {
   componentDidMount(props) {
   }
 
-  compile(layout, props?: TProps) {
+  compile(layout: string, props?: TProps) {
     if (typeof props === 'undefined') {
       props = this.props;
     }
@@ -234,8 +236,13 @@ class Block {
     const { events = {} } = this.props;
 
     Object.keys(events).forEach((eventName) => {
-      if (this._element.firstElementChild?.nodeName === 'INPUT') {
-        this._element.firstElementChild.addEventListener(eventName, events[eventName]);
+      if ((this._element.firstElementChild?.nodeName === 'INPUT')) {
+        this._element.firstElementChild.addEventListener(eventName, debounce(events[eventName]));
+      } else if (this._element.nodeName === 'UL') {
+        const childs = this._element.children;
+        for (let i = 0; i < childs.length; i += 1) {
+          childs[i].addEventListener(eventName, events[eventName]);
+        }
       } else {
         this._element.addEventListener(eventName, events[eventName]);
       }

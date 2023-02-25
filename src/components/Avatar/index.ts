@@ -1,12 +1,12 @@
-import Block from '../../modules/Block';
+import Block, { TProps } from '../../modules/Block';
 
 import Input from '../Input';
 
 import styles from './index.module.sass';
 
 class Avatar extends Block {
-  constructor(props) {
-    const input = new Input({
+  constructor(props: TProps) {
+    const InputAvatar = new Input({
       type: 'file',
       name: 'avatar',
       placeholder: '',
@@ -21,7 +21,7 @@ class Avatar extends Block {
     });
     super('form', {
       ...props,
-      input,
+      InputAvatar,
     });
   }
 
@@ -32,19 +32,13 @@ class Avatar extends Block {
   }
 
   render() {
-    const {
-      user: {
-        avatar,
-      },
-    } = this.state;
-
-    const path = `https://ya-praktikum.tech/api/v2/resources/${avatar}`;
+    const path = `https://ya-praktikum.tech/api/v2/resources/${this.props.user?.avatar}`;
 
     return this.compile(`
       <div class=${styles.avatar}>
-        <img src=${path} class=${styles.img} />
+        <img src=${path} />
         <label for='avatar' class=${styles.upload} >
-          {{{input}}}
+          {{{InputAvatar}}}
         </label>
       </div>
   `);

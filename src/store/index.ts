@@ -1,29 +1,23 @@
 import EventBus from '../modules/EventBus';
 import reducers from './reducers';
 
-export interface Action {
-  type: string;
-  payload?: any;
-}
+import {
+  Indexed,
+  TStore,
+} from './types';
 
 export const defaultState = {
-  isLoading: false,
-  loginFormError: '',
-  signupFormError: '',
-  addUserError: '',
-  deleteUserError: '',
   user: null,
-  searchResult: [],
   chatUsers: [],
-  appIsInited: false,
   chats: [],
   messages: [],
   socket: null,
   chatId: null,
-  screen: null,
+  token: '',
+  searchUsers: [],
+  showUserAffect: false,
+  showSearchUser: false,
 };
-
-export type Indexed = {[key: string]: any};
 
 class Store extends EventBus {
   private state: Indexed = {};
@@ -32,7 +26,7 @@ class Store extends EventBus {
 
   reducer: any;
 
-  constructor(defaultParams) {
+  constructor(defaultParams: TStore) {
     if (Store._instance) {
       return Store._instance;
     }

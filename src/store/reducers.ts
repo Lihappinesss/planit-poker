@@ -4,8 +4,15 @@ import {
   SET_ERROR,
   GET_USER,
   ADD_CHAT,
-  GET_CHATS,
+  SET_CHATS,
+  SET_TOKEN,
+  SET_MESSAGES,
   SET_CHAT_ID,
+  ADD_USER,
+  SET_SEARCH_USERS,
+  SET_SHOW_USER_AFFECT,
+  SET_CHAT_USERS,
+  SET_SHOW_SEARCH_USER,
 } from './actions';
 
 type Indexed = {[key: string]: any};
@@ -43,16 +50,52 @@ export default (state: Indexed, action: Action) => {
         ...state,
         chats: [...state.chats, action.payload],
       };
-    case GET_CHATS:
+    case SET_CHATS:
       return {
         ...state,
         chats: action.payload,
         chatId: action.payload[0].id,
       };
+    case SET_TOKEN:
+      return {
+        ...state,
+        token: action.payload,
+      };
+    case SET_MESSAGES:
+      return {
+        ...state,
+        messages: action.payload,
+      };
     case SET_CHAT_ID:
       return {
         ...state,
         chatId: action.payload,
+      };
+    case ADD_USER:
+      return {
+        ...state,
+        chatUsers: [...state.chatUsers, action.payload],
+      };
+    case SET_SEARCH_USERS:
+      return {
+        ...state,
+        searchUsers: action.payload,
+      };
+    case SET_CHAT_USERS:
+      return {
+        ...state,
+        chatUsers: action.payload,
+      };
+    case SET_SHOW_USER_AFFECT:
+      return {
+        ...state,
+        showUserAffect: action.payload,
+      };
+
+    case SET_SHOW_SEARCH_USER:
+      return {
+        ...state,
+        showSearchUser: action.payload,
       };
     default:
       return state;

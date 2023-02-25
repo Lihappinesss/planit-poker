@@ -1,7 +1,8 @@
 import UserApi from '../modules/Api/UserApi';
 
 import store from '../store';
-import { setUser } from '../store/actions';
+import { setUser, setSearchUsers } from '../store/actions';
+import { SignupData } from '../modules/Api/types';
 
 class UserController {
   private api: UserApi;
@@ -13,31 +14,29 @@ class UserController {
   async search(data) {
     try {
       await this.api.search(data)
-        .then((users) => {
-          return users;
-        });
+        .then((users) => store.dispatch(setSearchUsers(users)));
     } catch (e) {
       console.log(e);
     }
   }
 
-  async updateProfile(data) {
+  async updateProfile(data: SignupData) {
     try {
       await this.api.updateProfile(data)
         .then((user) => {
           store.dispatch(setUser(user));
-          return user;
+          console.log(user, 'user');
         });
     } catch (e) {
       console.log(e);
     }
   }
 
-  async updateAvatar(data) {
+  async updateAvatar(data: FormData) {
     try {
       await this.api.updateAvatar(data)
         .then((res) => {
-          store.dispatch(setUser(res));
+          // store.dispatch(setUser(res));
           return res;
         });
     } catch (e) {

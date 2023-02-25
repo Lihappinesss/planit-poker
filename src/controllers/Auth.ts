@@ -1,4 +1,6 @@
-import AuthApi, { SigninData, SignupData } from '../modules/Api/AuthApi';
+import AuthApi from '../modules/Api/AuthApi';
+
+import { SigninData, SignupData } from '../modules/Api/types';
 
 import store from '../store';
 import { getUser, deleteUser } from '../store/actions';
@@ -17,10 +19,9 @@ class AuthController {
       await this.api.checkAuth()
         .then((data) => {
           store.dispatch(getUser(data));
-          // router.go('/');
         });
     } catch (e) {
-      console.log(e);
+      router.go('/signin');
     }
   }
 
@@ -50,7 +51,7 @@ class AuthController {
     try {
       await this.api.signOut()
         .then(() => {
-          router.go('/');
+          router.go('/signin');
           store.dispatch(deleteUser());
         });
     } catch (e) {

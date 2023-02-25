@@ -34,14 +34,18 @@ class Input extends Block {
     return this.compile(
       `
         <input
-          class=${styles.input}
+          class=${this.props.styleType ? styles[this.props.styleType] : styles.input}
           type="{{type}}"
           placeholder="{{placeholder}}"
           name="{{name}}"
           autocomplete="off"
           value="{{value}}"
         />
-        <label for="{{name}}" class=${styles.label}>{{placeholder}}</label>
+        <label
+          for="{{name}}"
+          class=${this.props.styleType ? `${styles[this.props.styleType]}Label` : styles.label}>
+            {{placeholder}}
+        </label>
         <div class='error'></div>
       `,
       this.props,
