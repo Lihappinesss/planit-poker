@@ -1,4 +1,5 @@
 import Block, { TProps } from '../../modules/Block';
+import router from '../../modules/Router';
 
 import userController from '../../controllers/UserController';
 import authController from '../../controllers/Auth';
@@ -11,7 +12,6 @@ import validateForm from '../../utils/validateForm';
 import connect from '../../hoc/connect';
 
 import template from './template';
-import router from '../../modules/Router';
 
 class ProfilePage extends Block {
   constructor(tag: string, props: TProps) {
@@ -21,30 +21,16 @@ class ProfilePage extends Block {
   }
 
   async init() {
-    authController.fetchUser();
-    const { user = {} } = this.props || {};
-    const nameProfile = user?.first_name;
-    this.props.nameProfile = nameProfile;
+    const {
+      email,
+      login,
+      phone,
+      second_name: secondName,
+      display_name: displayName,
+      first_name: firstName,
+    } = this.props.user || {};
 
-    this.children.Email = new Input({
-      type: 'email',
-      placeholder: 'Почта',
-      name: 'email',
-      onValidate:
-        (
-          element: HTMLInputElement,
-        ) => validateForm(element.value, element.name, element),
-    });
-
-    this.children.Login = new Input({
-      type: 'text',
-      placeholder: 'Логин',
-      name: 'login',
-      onValidate:
-        (
-          element: HTMLInputElement,
-        ) => validateForm(element.value, element.name, element),
-    });
+    this.props.nameProfile = firstName;
 
     const handleSubmit = (e: MouseEvent) => {
       e.preventDefault();
@@ -57,10 +43,33 @@ class ProfilePage extends Block {
       userController.updateProfile(formData);
     };
 
+    this.children.Email = new Input({
+      type: 'email',
+      placeholder: 'Почта',
+      name: 'email',
+      value: email,
+      onValidate:
+        (
+          element: HTMLInputElement,
+        ) => validateForm(element.value, element.name, element),
+    });
+
+    this.children.Login = new Input({
+      type: 'text',
+      placeholder: 'Логин',
+      name: 'login',
+      value: login,
+      onValidate:
+        (
+          element: HTMLInputElement,
+        ) => validateForm(element.value, element.name, element),
+    });
+
     this.children.Name = new Input({
       type: 'text',
       placeholder: 'Имя',
       name: 'first_name',
+      value: firstName,
       onValidate:
         (
           element: HTMLInputElement,
@@ -71,6 +80,7 @@ class ProfilePage extends Block {
       type: 'text',
       placeholder: 'Фамилия',
       name: 'second_name',
+      value: secondName,
       onValidate:
         (
           element: HTMLInputElement,
@@ -81,6 +91,7 @@ class ProfilePage extends Block {
       type: 'tel',
       placeholder: 'Телефон',
       name: 'phone',
+      value: phone,
       onValidate:
         (
           element: HTMLInputElement,
@@ -101,13 +112,14 @@ class ProfilePage extends Block {
       type: 'text',
       placeholder: 'Имя в чате',
       name: 'display_name',
+      value: displayName,
       onValidate:
         (
           element: HTMLInputElement,
         ) => validateForm(element.value, element.name, element),
     });
 
-    this.children.Ava = new Avatar({
+    this.children.UserAvatar = new Avatar({
       ...this.props,
       onInput: (file: File) => {
         const formData = new FormData();

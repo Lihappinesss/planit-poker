@@ -21,7 +21,7 @@ type LastMessage = {
   user: User,
 }
 
-type Chats = {
+export type TChats = {
   avatar: string | null,
   created_by: number
   id: number
@@ -44,7 +44,7 @@ type messages = {
 export type TStore = {
   user?: User | null,
   chatUsers?: User[] | [],
-  chats?: Chats[] | [],
+  chats?: TChats[] | [],
   messages?: messages[] | [],
   socket?: string | null,
   chatId?: number | null,

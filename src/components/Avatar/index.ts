@@ -12,6 +12,7 @@ class Avatar extends Block {
       type: 'file',
       name: 'avatar',
       placeholder: '',
+      styleType: 'upload',
       onInput: (_, e) => {
         const { files }: { files: FileList | null } = e.target as HTMLInputElement;
         if (!files?.length) {
@@ -34,10 +35,8 @@ class Avatar extends Block {
 
     return this.compile(`
       <div class=${styles.avatar}>
-        <img src=${path} />
-        <label for='avatar' class=${styles.upload} >
-          {{{InputAvatar}}}
-        </label>
+        <img src=${path} class=${styles.img} />
+        {{{InputAvatar}}}
       </div>
   `);
   }

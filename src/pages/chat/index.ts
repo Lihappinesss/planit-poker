@@ -13,6 +13,7 @@ import {
   setSearchUsers,
   setShowUserAffect,
   setShowSearchUser,
+  setChats,
 }
   from '../../store/actions';
 
@@ -22,6 +23,8 @@ import Chats from '../../components/ChatsCard';
 import MessageSend from '../../components/MessageSend';
 import UserAffect from '../../components/UserAffectList';
 import Popup from '../../components/Popup';
+
+import { TChats } from '../../store/types';
 
 import template from './template';
 
@@ -71,7 +74,10 @@ class ChatPage extends Block {
       placeholder: 'Поиск',
       name: 'search',
       styleType: 'secondary',
-      // onInput: (value) => console.log(value),
+      onInput: (value) => {
+        const filteredChats = this.props.chats?.filter((chat: TChats) => chat.title === value);
+        store.dispatch(setChats(filteredChats));
+      },
     });
 
     this.children.Send = new MessageSend('form', {

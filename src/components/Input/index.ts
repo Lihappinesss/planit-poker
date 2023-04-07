@@ -18,7 +18,7 @@ class Input extends Block {
           }
         },
       },
-      className: styles.wrapper,
+      className: props.styleType === 'upload' ? '' : styles.wrapper,
     });
     this.validateForm = this.validateForm.bind(this);
   }
@@ -43,7 +43,7 @@ class Input extends Block {
         />
         <label
           for="{{name}}"
-          class=${this.props.styleType ? `${styles[this.props.styleType]}Label` : styles.label}>
+          class=${this.props.styleType ? `${styles[this.props.styleType]}-label` : styles.label}>
             {{placeholder}}
         </label>
         <div class='error'></div>
